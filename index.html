@@ -203,7 +203,7 @@
             // ctx.font="20px";
             ctx.fillStyle = colors[i % 18];
             ctx.fillText(
-"送梦灵！澎湃之心"，
+                "送梦灵，澎湃之心",
                 this.x - this.width * 0.5,
                 this.y - this.height * 0.5,
                 this.width,
@@ -238,83 +238,83 @@
             particles: {
                 length: 500, // maximum amount of particles
                 duration: 2, // particle duration in sec
-                速度:100,//粒子速度(像素/秒)
-                效果: -0.75,//玩这个效果好
-                大小:30,//粒度(像素)
+                velocity: 100, // particle velocity in pixels/sec
+                effect: -0.75, // play with this for a nice effect
+                size: 30, // particle size in pixels
             },
         };
 
         /*
-*requestAnimationFrame polyfill，作者：Erik Mller
-*/
-        (功能 () {
-            var b=0;
-            var c=["毫秒","moz","webkit","o"];
-            为 (var 一个=0；a<c.长度&&！窗口。requestAnimationFrame；++a) {
-窗户。requestAnimationFrame=窗口[c[一个]+"requestAnimationFrame"];
-窗户。cancelAnimationFrame=
-窗户[c[一个]+"CancelAnimationFrame"]||
-窗户[c[一个]+"CancelRequestAnimationFrame"];
+         * RequestAnimationFrame polyfill by Erik M?ller
+         */
+        (function () {
+            var b = 0;
+            var c = ["ms", "moz", "webkit", "o"];
+            for (var a = 0; a < c.length && !window.requestAnimationFrame; ++a) {
+                window.requestAnimationFrame = window[c[a] + "RequestAnimationFrame"];
+                window.cancelAnimationFrame =
+                    window[c[a] + "CancelAnimationFrame"] ||
+                    window[c[a] + "CancelRequestAnimationFrame"];
             }
-            如果 (窗户。requestAnimationFrame) {
-窗户。requestAnimationFrame=功能 (h,e) {
-                    var d=新的日期().getTime();
-                    var f=数学。最大值(0,16-(D-b));
-                    var g=窗口。setTimeout(功能 () {
-                        h(D+f);
-                    }，f);
-B=d+f；
-                    返回g；
+            if (!window.requestAnimationFrame) {
+                window.requestAnimationFrame = function (h, e) {
+                    var d = new Date().getTime();
+                    var f = Math.max(0, 16 - (d - b));
+                    var g = window.setTimeout(function () {
+                        h(d + f);
+                    }, f);
+                    b = d + f;
+                    return g;
                 };
             }
-            如果 (窗户。cancelAnimationFrame) {
-窗户。cancelAnimationFrame=功能 (d) {
+            if (!window.cancelAnimationFrame) {
+                window.cancelAnimationFrame = function (d) {
                     clearTimeout(d);
                 };
             }
         })();
 
         /*
-*点级
-*/
-        var 点=(功能 () {
-            功能 点(x,y) {
-                这.x=typeofX！=="未定义"？X：0;
-                这.y=typeofy！=="未定义"？Y：0;
+         * Point class
+         */
+        var Point = (function () {
+            function Point(x, y) {
+                this.x = typeof x !== "undefined" ? x : 0;
+                this.y = typeof y !== "undefined" ? y : 0;
             }
-点。原型.克隆=功能 () {
-                返回 新的点(这.x,这.y);
+            Point.prototype.clone = function () {
+                return new Point(this.x, this.y);
             };
-点。原型.长度=功能 (长度) {
-                如果 (typeof长度=="未定义")
-                    返回数学。sqrt(这.x*这.x+这.y*这.y);
-                这.正常化();
-                这.x*=长度；
-                这.y*=长度；
-                返回 这;
+            Point.prototype.length = function (length) {
+                if (typeof length == "undefined")
+                    return Math.sqrt(this.x * this.x + this.y * this.y);
+                this.normalize();
+                this.x *= length;
+                this.y *= length;
+                return this;
             };
-点。原型.正常化=功能 () {
-                var 长度=这.长度();
-                这.x/=长度；
-                这.y/=长度；
-                返回 这;
+            Point.prototype.normalize = function () {
+                var length = this.length();
+                this.x /= length;
+                this.y /= length;
+                return this;
             };
-            返回点；
+            return Point;
         })();
 
         /*
-*粒子类别
-*/
+         * Particle class
+         */
 
-        var 颗粒=(功能 () {
-            功能 颗粒() {
-                这.位置=新的点();
-                这.速度=新的点();
-                这.加速度=新的点();
-                这.年龄=0;
+        var Particle = (function () {
+            function Particle() {
+                this.position = new Point();
+                this.velocity = new Point();
+                this.acceleration = new Point();
+                this.age = 0;
             }
-颗粒。原型.初始化=功能 (x,y,DX,Dy) {
-                这.位置.x=x；
+            Particle.prototype.initialize = function (x, y, dx, dy) {
+                this.position.x = x;
                 this.position.y = y;
                 this.velocity.x = dx;
                 this.velocity.y = dy;
